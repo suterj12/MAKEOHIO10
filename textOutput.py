@@ -3,13 +3,15 @@
 # tkinter and ttk module
 from tkinter import *
 from tkinter.ttk import *
+from gtts import *
+from playsound import playsound
  
 # creates a Tk() object
 master = Tk()
  
 # sets the geometry of main 
 # root window
-master.geometry("200x200")
+master.geometry("500x500")
  
  
 # function to open a new window 
@@ -25,15 +27,14 @@ def openNewWindow():
     newWindow.title("New Window")
  
     # sets the geometry of toplevel
-    newWindow.geometry("2000x2000")
+    newWindow.geometry("1000x1000")
  
     # A Label widget to show in toplevel
     Label(newWindow, 
           text ="This is a new window").pack()
      
  
-label = Label(master, 
-              text ="This is the main window")
+label = Label(master, text ="This is the main window", font=("Arial", 25))
  
 label.pack(pady = 10)
  
@@ -43,6 +44,26 @@ btn = Button(master,
              text ="Click to open a new window", 
              command = openNewWindow)
 btn.pack(pady = 10)
+
+
+#section to implement text to speech
+language = 'en'
+
+# Passing the text and language to the engine,  
+# here we have marked slow=False. Which tells  
+# the module that the converted audio should  
+# have a high speed 
+audioObj = gTTS(text="howdy partner", lang=language, slow=False) 
+  
+soundFile = "runSound.mp3"
+
+# Saving the converted audio in a mp3 file named welcome
+audioObj.save(soundFile) 
+
+soundFile = soundFile.replace(" ", "%20");
+  
+# Playing the converted file 
+playsound(soundFile)  
  
 # mainloop, runs infinitely
 mainloop()
