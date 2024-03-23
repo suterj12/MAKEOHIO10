@@ -51,23 +51,54 @@ def update_webcam_preview():
     preview.image = tkimg # see https://stackoverflow.com/questions/3482081/how-to-update-the-image-of-a-tkinter-label-widget
     preview.pack()
 
-def is_clean(data) -> bool:
+class BoundingBox:
+    """
+    all values range from 0 to 1 (they are proportional to the image)
+    """
+    def __init__(self, x: float, y: float, w: float, h: float):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+    
+    def get_center(self) -> tuple[float, float]:
+        return (
+            self.x + (self.w / 2),
+            self.y + (self.h / 2)
+        )
+    
+    def __str__(self) -> str:
+        return f'{self.x:.1f}, {self.h:.1f}, {self.w:.1f}x{self.h:.1f}'
+
+class Object:
+    def __init__(self, name: str, confidence: float, bounds: BoundingBox):
+        self.name = name
+        self.confidence = confidence
+        self.bounds = bounds
+    
+    def __str__(self) -> str:
+        return f'{self.confidence*100:.1f}% {self.name} @ {{{self.bounds}}}'
+
+def detect_objects(data) -> list[Object]:
     """
     `data` is a binary video or image file
     """
+    results: list[Object] = []
+
     global video_client
     global FEATURES
     operation = video_client.annotate_video(
         request={"features": FEATURES, "input_content": data}
     )
+
     print("Detecting objects...")
     result = operation.result(timeout=500)
 
-    # The first result is retrieved because a single video was processed.
+    # The first result is retrieved because a single file was processed.
     object_annotations = result.annotation_results[0].object_annotations
     print(f'{len(object_annotations)} objects detected.')
 
-    # Get only the first annotation for demo purposes.
+    # process results
     for annotation in object_annotations:
         print("Entity description: {}".format(annotation.entity.description))
         if annotation.entity.entity_id:
@@ -84,21 +115,33 @@ def is_clean(data) -> bool:
 
         print("Confidence: {}".format(annotation.confidence))
 
-    # Here we print only the bounding box of the first frame in this segment
-    frame = annotation.frames[0]
-    box = frame.normalized_bounding_box
-    print(
-        "Time offset of the first frame: {}s".format(
-            frame.time_offset.seconds + frame.time_offset.microseconds / 1e6
+        bounds = annotation.frames[0].normalized_bounding_box
+        bb = BoundingBox(
+            bounds.left,
+            bounds.top,
+            bounds.right - bounds.left,
+            bounds.bottom - bounds.top
         )
-    )
-    print("Bounding box position:")
-    print("\tleft  : {}".format(box.left))
-    print("\ttop   : {}".format(box.top))
-    print("\tright : {}".format(box.right))
-    print("\tbottom: {}".format(box.bottom))
-    print("\n")
-    return False
+        o = Object(
+            annotation.entity.description,
+            annotation.confidence,
+            bb
+        )
+        results.append(o)
+
+    return results
+
+def get_object_message(o: Object) -> str:
+    position = 'ahead'
+    if o.bounds.get_center()[0] < 0.33:
+        position = 'to your left'
+    elif o.bounds.get_center()[0] > 0.66:
+        position = 'to your right'
+    return f"There's a {o.name} {position}."
+
+def say_message(msg: str):
+    # TODO: use gTTS to say the message
+    showinfo('info', msg)
 
 def press_finish_button(event=None):
     global webcam
@@ -120,12 +163,21 @@ def press_finish_button(event=None):
     imgfile = buffer.read()
     print(len(imgfile))
 
-    if is_clean(imgfile):
-        print("Nice! Everything's clean!")
-        showinfo(":)", "Nice! Everything's clean!")
-    else:
-        print("There's still more to clean!")
-        showinfo(":()", "There's still more to clean!")
+    objects = detect_objects(imgfile)
+
+    for o in objects:
+        print(o)
+        print(o.bounds.get_center())
+    
+    for o in objects:
+        say_message(get_object_message(o))
+
+    # if detect_objects(imgfile):
+    #     print("Nice! Everything's clean!")
+    #     showinfo(":)", "Nice! Everything's clean!")
+    # else:
+    #     print("There's still more to clean!")
+    #     showinfo(":()", "There's still more to clean!")
 
     # print('Success!')
 
@@ -133,8 +185,6 @@ if __name__ == '__main__':
     root = tk.Tk()
     ttk.Label(root, text='KAM').pack()
 
-    # preview = tk.PhotoImage()
-    # preview.
     preview = ttk.Label(root, image=[])
     preview.pack()
 
