@@ -10,7 +10,7 @@ CREDENTIALS = service_account.Credentials.from_service_account_file(
 video_client = videointelligence.VideoIntelligenceServiceClient(credentials=CREDENTIALS)
 features = [videointelligence.Feature.OBJECT_TRACKING]
 
-with io.open("data/DirtyFront.MOV", "rb") as file:
+with io.open("data/CoveredKSA2.MOV", "rb") as file:
     input_content = file.read()
 
 operation = video_client.annotate_video(
@@ -25,21 +25,21 @@ print("\nFinished processing.\n")
 object_annotations = result.annotation_results[0].object_annotations
 
 # Get only the first annotation for demo purposes.
-object_annotation = object_annotations[0]
-print("Entity description: {}".format(object_annotation.entity.description))
-if object_annotation.entity.entity_id:
-    print("Entity id: {}".format(object_annotation.entity.entity_id))
+for object_annotation in object_annotations:
+    print("Entity description: {}".format(object_annotation.entity.description))
+    if object_annotation.entity.entity_id:
+        print("Entity id: {}".format(object_annotation.entity.entity_id))
 
-print(
-    "Segment: {}s to {}s".format(
-        object_annotation.segment.start_time_offset.seconds
-        + object_annotation.segment.start_time_offset.microseconds / 1e6,
-        object_annotation.segment.end_time_offset.seconds
-        + object_annotation.segment.end_time_offset.microseconds / 1e6,
+    print(
+        "Segment: {}s to {}s".format(
+            object_annotation.segment.start_time_offset.seconds
+            + object_annotation.segment.start_time_offset.microseconds / 1e6,
+            object_annotation.segment.end_time_offset.seconds
+            + object_annotation.segment.end_time_offset.microseconds / 1e6,
+        )
     )
-)
 
-print("Confidence: {}".format(object_annotation.confidence))
+    print("Confidence: {}".format(object_annotation.confidence))
 
 # Here we print only the bounding box of the first frame in this segment
 frame = object_annotation.frames[0]
