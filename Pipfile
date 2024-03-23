@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 webcam = "*"
+gtts = "*"
 
 [dev-packages]
 
