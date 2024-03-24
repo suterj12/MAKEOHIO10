@@ -264,7 +264,7 @@ def press_finish_button(event=None):
 
     #Process the image 
     result = detect_objects(imgfile)
-    
+
     #Determine which objects were seen
     objects_in_frame = get_objects_from_result(result)
 
