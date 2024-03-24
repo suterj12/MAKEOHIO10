@@ -1,5 +1,5 @@
 #!/bin/sh
-'''exec' "/Users/lindseyallen/Documents/Spring 2024/MakeOHIO10/MAKEOHIO10/venv/bin/python3.12" "$0" "$@"
+'''exec' "/Users/lindseyallen/Documents/Spring 2024/MakeOHIO10/MAKEOHIO10/.venv/bin/python" "$0" "$@"
 ' '''
 # -*- coding: utf-8 -*-
 import re
