@@ -380,7 +380,7 @@ if __name__ == '__main__':
     # root.mainloop()
 
     # open serial port
-    port = serial.Serial('/dev/ttyUSB0', 9600)
+    port = serial.Serial('/dev/cu.usbserial-110', 9600)
 
     while not is_done:
 
