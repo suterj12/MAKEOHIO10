@@ -1,6 +1,6 @@
 """
 This file is intended to take series of images or 
-videos are parse the objects seen in them into a file.
+videos and parse the objects seen in them into a file.
 The images or videos must be passed as a single file.
 To differentiate between each segment define the offset times 
 from the beginning of the video in the segments variable.
@@ -54,9 +54,7 @@ with open(output_file_path, 'w') as f:
     #Iterate through each segment.
     for i in range(len(segments)):
         object_descriptions = set()
-        f.write(f'instance{i}\n')
         for object_annotation in object_annotations[i]:
             object_descriptions.add(object_annotation.entity.description)
             f.write(f'{object_annotation.entity.description}\n')
-        f.write('\n')
         print('Object descriptions in segment' , i, ':', object_descriptions, '\n')

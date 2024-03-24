@@ -51,6 +51,14 @@ def update_webcam_preview():
     preview.image = tkimg # see https://stackoverflow.com/questions/3482081/how-to-update-the-image-of-a-tkinter-label-widget
     preview.pack()
 
+def read_objects_from_file(file_name: str) -> set:
+    clean_objects = set()
+    with open(file_name, 'rb') as f:
+        for line in f:
+            if not len(line) == 0:
+                clean_objects.add(line.decode().strip())
+    return clean_objects
+
 class BoundingBox:
     """
     all values range from 0 to 1 (they are proportional to the image)
