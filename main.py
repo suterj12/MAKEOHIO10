@@ -58,7 +58,7 @@ def press_connect_webcam(event=None):
     global webcamdropdown
     device = int(webcamdropdown.get())
     try:
-        webcam = Webcam(src=device)
+        webcam = Webcam(src=device, h=500, w=888)
     except AssertionError as e:
         webcam = None
         showinfo('info', 'Webcam not detected. Is it properly plugged in?')
