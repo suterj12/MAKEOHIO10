@@ -1,11 +1,18 @@
-"""Object tracking in a local video."""
+"""
+This file is intended to take series of images or 
+videos are parse the objects seen in them into a file.
+The images or videos must be passed as a single file.
+To differentiate between each segment define the offset times 
+from the beginning of the video in the segments variable.
+The output will be printed to the location specified by
+the "output_file_path" variable.
+"""
 from google.cloud import videointelligence
 from google.oauth2 import service_account
 import io
 
 #Get the API credentials from the env file.
-CREDENTIALS = service_account.Credentials.from_service_account_file(
-    '.env')
+CREDENTIALS = service_account.Credentials.from_service_account_file('.env')
 
 #Define the video segments.
 segments = [
@@ -42,7 +49,7 @@ for annotation in result.annotation_results:
     object_annotations.append(annotation.object_annotations)
 
 #Open the file to write to.
-with open(output_file_path, 'a') as f:
+with open(output_file_path, 'w') as f:
 
     #Iterate through each segment.
     for i in range(len(segments)):
@@ -50,7 +57,6 @@ with open(output_file_path, 'a') as f:
         f.write(f'instance{i}\n')
         for object_annotation in object_annotations[i]:
             object_descriptions.add(object_annotation.entity.description)
-            f.write(f'{object_annotation.entity.description};')
-        f.write('\n\n')
-        print('Object descriptions in segment ' , i, ': ', object_descriptions, '\n')
-
+            f.write(f'{object_annotation.entity.description}\n')
+        f.write('\n')
+        print('Object descriptions in segment' , i, ':', object_descriptions, '\n')
