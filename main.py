@@ -9,6 +9,8 @@ from webcam import Webcam
 import tkinter as tk # base tk library
 from tkinter.messagebox import showinfo
 from tkinter import ttk # newer tk widgets
+from gtts import *
+from playsound import playsound
 
 from gtts import gTTS
 from itertools import islice
@@ -241,7 +243,25 @@ def get_object_message(o: Object) -> str:
     return f"There's a {o.name} {position}."
 
 def say_message(msg: str):
-    # TODO: use gTTS to say the message
+    #section to implement text to speech
+    language = 'en'
+
+    # Passing the text and language to the engine,  
+    # here we have marked slow=False. Which tells  
+    # the module that the converted audio should  
+    # have a high speed 
+    audioObj = gTTS(text=msg, lang=language, slow=False) 
+    
+    soundFile = "runSound.mp3"
+
+    # Saving the converted audio in a mp3 file named welcome
+    audioObj.save(soundFile) 
+
+    soundFile = soundFile.replace(" ", "%20");
+    
+    # Playing the converted file 
+    playsound(soundFile)  
+
     showinfo('info', msg)
 
 def press_finish_button(event=None):
