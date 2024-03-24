@@ -126,7 +126,7 @@ def get_objects_from_result(result) -> set:
     return objects_in_view
 
 def check_if_table_is_clean(clean_table: set, objects_in_view: set) -> bool:
-    return len(clean_table.difference(objects_in_view)) == 0
+    return objects_in_view.issubset(clean_table)
 
 class BoundingBox:
     """
