@@ -262,14 +262,28 @@ def press_finish_button(event=None):
     imgfile = buffer.read()
     print(len(imgfile))
 
-    objects = detect_objects(imgfile)
-
-    for o in objects:
-        print(o)
-        print(o.bounds.get_center())
+    #Process the image 
+    result = detect_objects(imgfile)
     
-    for o in objects:
-        say_message(get_object_message(o))
+    #Determine which objects were seen
+    objects_in_frame = get_objects_from_result(result)
+
+    #Define a clean table
+    clean_environment = read_objects_from_file('data/clean_environment_objects.txt')
+
+    #Check if the table is clean and report to the user
+    is_clean = check_if_table_is_clean(clean_table=clean_environment, objects_in_view=objects_in_frame)
+    if is_clean:
+        say_message('The table is clean!')
+    else:
+        say_message('There\'s still more to clean!')
+
+    # for o in objects:
+    #     print(o)
+    #     print(o.bounds.get_center())
+    
+    # for o in objects:
+    #     say_message(get_object_message(o))
 
     # if detect_objects(imgfile):
     #     print("Nice! Everything's clean!")
