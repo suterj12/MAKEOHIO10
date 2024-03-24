@@ -22,12 +22,26 @@ preview: tk.Label = None
 
 def press_connect_webcam(event=None):
     global webcam
-    webcam = Webcam(src=2)
+    try:
+        webcam = Webcam(src=2)
+    except AssertionError as e:
+        webcam = None
+        showinfo('info', 'Webcam not detected. Is it properly plugged in?')
     if webcam is None:
         print("Failed to connect.")
     else:
         print("Connected!")
         print(f'{webcam.w}x{webcam.h}')
+
+def disconnect_webcam():
+    global webcam
+    global lastframe
+    global preview
+    webcam = None
+    lastframe = None
+    preview.config(image=None)
+    preview.image = None
+    showinfo('info', 'Webcam disconnected.')
 
 def update_webcam_preview():
     global webcam
@@ -221,6 +235,10 @@ if __name__ == '__main__':
     # root.mainloop()
 
     while True:
-        update_webcam_preview()
+        try:
+            update_webcam_preview()
+        except StopIteration as e:
+            # camera probably disconnected
+            disconnect_webcam()
         root.update_idletasks()
         root.update()
