@@ -330,7 +330,7 @@ if __name__ == '__main__':
     webcamdisconnectbutton = ttk.Button(mainui, text='Disconnect webcam', command=press_disconnect_webcam)
     webcamdisconnectbutton.pack()
 
-    b = ttk.Button(mainui, text='Finish', command=press_finish_button)
+    b = ttk.Button(mainui, text='Check', command=press_finish_button)
     b.bind('<Return>', press_finish_button)
     b.pack()
 
