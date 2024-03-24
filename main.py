@@ -387,6 +387,7 @@ if __name__ == '__main__':
         if port.in_waiting > 0:
             inbound = port.read(port.in_waiting)
             print(inbound.decode('utf-8'))
+            press_finish_button()
 
         try:
             update_webcam_preview()
