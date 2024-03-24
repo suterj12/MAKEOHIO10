@@ -236,7 +236,10 @@ def get_object_message(o: Object) -> str:
         position = 'to your left'
     elif o.bounds.get_center()[0] > 0.66:
         position = 'to your right'
-    return f"There's a {o.name} {position}."
+    a = 'a'
+    if o.name.lower()[0] in 'aeiou':
+        a = 'an'
+    return f"There's {a} {o.name} {position}."
 
 def say_message(msg: str):
     # TODO: use gTTS to say the message
