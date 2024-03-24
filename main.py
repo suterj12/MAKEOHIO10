@@ -7,12 +7,12 @@ from google.cloud import videointelligence
 from google.oauth2 import service_account
 from webcam import Webcam
 import tkinter as tk # base tk library
+import tkinter.font as tkfont
 from tkinter.messagebox import showinfo
 from tkinter import ttk # newer tk widgets
+from ttkthemes import ThemedTk
 from gtts import *
 from playsound import playsound
-
-from gtts import gTTS
 from itertools import islice
 from PIL import Image, ImageTk # for converting webcam images to show in tk
 from io import BytesIO
@@ -240,7 +240,10 @@ def get_object_message(o: Object) -> str:
         position = 'to your left'
     elif o.bounds.get_center()[0] > 0.66:
         position = 'to your right'
-    return f"There's a {o.name} {position}."
+    a = 'a'
+    if o.name.lower()[0] in 'aeiou':
+        a = 'an'
+    return f"There's {a} {o.name} {position}."
 
 def say_message(msg: str):
     #section to implement text to speech
@@ -321,8 +324,18 @@ def close_window():
     is_done = True
 
 if __name__ == '__main__':
-    root = tk.Tk()
+    # root = tk.Tk()
+    root = ThemedTk(theme='arc', themebg=True)
     root.protocol("WM_DELETE_WINDOW", close_window)
+    root.resizable(True, True)
+    # root.style = ttk.Style(root)
+    # print(root.style.theme_names())
+
+    # see https://stackoverflow.com/questions/68375136/what-is-the-default-font-of-tkinter-label
+    bigfont = (tkfont.nametofont('TkTextFont').actual()['family'], 32)
+    # bigfont['size'] = 32
+    bigtheme = ttk.Style()
+    bigtheme.configure(".", font=bigfont)
 
     ttk.Label(root, text='KAM').pack()
 
@@ -332,7 +345,7 @@ if __name__ == '__main__':
     webcamrefreshbutton = ttk.Button(webcamoptions, text='Refresh webcam list', command=press_refresh_webcams)
     webcamrefreshbutton.pack()
 
-    webcamdropdown = ttk.Combobox(webcamoptions)
+    webcamdropdown = ttk.Combobox(webcamoptions, font=bigfont)
     webcamdropdown['values'] = []
     webcamdropdown.pack()
 
@@ -351,7 +364,7 @@ if __name__ == '__main__':
     webcamdisconnectbutton = ttk.Button(mainui, text='Disconnect webcam', command=press_disconnect_webcam)
     webcamdisconnectbutton.pack()
 
-    b = ttk.Button(mainui, text='Check Space', command=press_finish_button)
+    b = ttk.Button(mainui, text='Check', command=press_finish_button)
     b.bind('<Return>', press_finish_button)
     b.pack()
 
