@@ -227,6 +227,8 @@ def detect_objects(data) -> list[Object]:
             bb
         )
         results.append(o)
+    
+    return result
 
     return results
 
