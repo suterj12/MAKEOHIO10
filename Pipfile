@@ -8,7 +8,11 @@ webcam = "*"
 gtts = "*"
 pillow = "*"
 pyserial = "*"
+<<<<<<< HEAD
 playsound = "*"
+=======
+ttkthemes = "*"
+>>>>>>> main
 
 [dev-packages]
 
