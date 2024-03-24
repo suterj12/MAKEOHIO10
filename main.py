@@ -1,4 +1,7 @@
-# TODO: https://stackoverflow.com/questions/8044539/listing-available-devices-in-python-opencv
+# see https://stackoverflow.com/questions/49602465/how-to-stop-opencv-error-message-from-printing-in-python
+import os
+os.environ["OPENCV_LOG_LEVEL"] = "FATAL"
+import cv2
 
 from google.cloud import videointelligence
 from google.oauth2 import service_account
@@ -6,7 +9,7 @@ from webcam import Webcam
 import tkinter as tk # base tk library
 from tkinter.messagebox import showinfo
 from tkinter import ttk # newer tk widgets
-import cv2
+
 from gtts import gTTS
 from itertools import islice
 from PIL import Image, ImageTk # for converting webcam images to show in tk
@@ -33,7 +36,22 @@ webcamdisconnectbutton: ttk.Button = None
 
 def press_refresh_webcams(event=None):
     global webcamdropdown
-    webcamdropdown['values'] = ['0', '1', '2', '3', '4']
+
+    # see https://stackoverflow.com/questions/8044539/listing-available-devices-in-python-opencv
+    device = 0
+    devices = []
+    i = 10
+    for i in range(10):
+        camera = cv2.VideoCapture(i)
+        if camera.read()[0]:
+            devices.append(i)
+            camera.release()
+
+    # webcamdropdown['values'] = ['0', '1', '2', '3', '4']
+    webcamdropdown['values'] = devices
+
+    if len(devices) > 0:
+        webcamdropdown.set(devices[0])
 
 def press_connect_webcam(event=None):
     global webcam
