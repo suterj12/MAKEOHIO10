@@ -1,15 +1,16 @@
+chair
 table
-bottle
-packaged goods
-car
 table
 chair
-chair
-coffee table
 table
-car
-bottle
+stool
+table
+stool
+stool
+table
 chair
 chair
-packaged goods
-bottle
+chair
+chair
+chair
+table
