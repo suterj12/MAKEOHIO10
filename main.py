@@ -18,29 +18,70 @@ video_client = videointelligence.VideoIntelligenceServiceClient(credentials=CRED
 webcam: Webcam = None
 lastframe = None
 
+webcamoptions: ttk.Frame = None
+webcamrefreshbutton: ttk.Button = None
+webcamdropdown: ttk.Combobox = None
+webcamconnectbutton: ttk.Button = None
+
+mainui: ttk.Frame = None
 preview: tk.Label = None
+webcamdisconnectbutton: ttk.Button = None
+
+def press_refresh_webcams(event=None):
+    global webcamdropdown
+    webcamdropdown['values'] = ['0', '1', '2', '3', '4']
 
 def press_connect_webcam(event=None):
     global webcam
+    global webcamdropdown
+    device = int(webcamdropdown.get())
     try:
-        webcam = Webcam(src=2)
+        webcam = Webcam(src=device)
     except AssertionError as e:
         webcam = None
         showinfo('info', 'Webcam not detected. Is it properly plugged in?')
     if webcam is None:
         print("Failed to connect.")
+        return
     else:
         print("Connected!")
         print(f'{webcam.w}x{webcam.h}')
+    
+    # hide webcam selection controls
+    if webcamoptions is not None:
+        webcamoptions.pack_forget()
+    # if webcamrefreshbutton is not None:
+    #     webcamrefreshbutton.pack_forget()
+    # if webcamdropdown is not None:
+    #     webcamdropdown.pack_forget()
+    # if webcamconnectbutton is not None:
+    #     webcamconnectbutton.pack_forget()
+    if mainui is not None:
+        mainui.pack()
 
-def disconnect_webcam():
+def press_disconnect_webcam(event=None):
     global webcam
     global lastframe
     global preview
+    if webcam is not None:
+        webcam.release()
     webcam = None
     lastframe = None
     preview.config(image=None)
     preview.image = None
+
+    # show webcam selection controls
+    if webcamoptions is not None:
+        webcamoptions.pack()
+    # if webcamrefreshbutton is not None:
+    #     webcamrefreshbutton.pack()
+    # if webcamdropdown is not None:
+    #     webcamdropdown.pack()
+    # if webcamconnectbutton is not None:
+    #     webcamconnectbutton.pack()
+    if mainui is not None:
+        mainui.pack_forget()
+
     showinfo('info', 'Webcam disconnected.')
 
 def update_webcam_preview():
@@ -221,16 +262,36 @@ if __name__ == '__main__':
     root = tk.Tk()
     ttk.Label(root, text='KAM').pack()
 
-    preview = ttk.Label(root, image=[])
+    # webcam options frame
+    webcamoptions = ttk.Frame(root)
+
+    webcamrefreshbutton = ttk.Button(webcamoptions, text='Refresh webcam list', command=press_refresh_webcams)
+    webcamrefreshbutton.pack()
+
+    webcamdropdown = ttk.Combobox(webcamoptions)
+    webcamdropdown['values'] = []
+    webcamdropdown.pack()
+
+    webcamconnectbutton = ttk.Button(webcamoptions, text='Connect webcam', command=press_connect_webcam)
+    webcamconnectbutton.bind('<Return>', press_connect_webcam)
+    webcamconnectbutton.pack()
+
+    webcamoptions.pack()
+
+    # main ui frame
+    mainui = ttk.Frame(root)
+
+    preview = ttk.Label(mainui, image=[])
     preview.pack()
 
-    b = ttk.Button(root, text='Connect webcam', command=press_connect_webcam)
-    b.bind('<Return>', press_connect_webcam)
-    b.pack()
+    webcamdisconnectbutton = ttk.Button(mainui, text='Disconnect webcam', command=press_disconnect_webcam)
+    webcamdisconnectbutton.pack()
 
-    b = ttk.Button(root, text='Finish', command=press_finish_button)
+    b = ttk.Button(mainui, text='Finish', command=press_finish_button)
     b.bind('<Return>', press_finish_button)
     b.pack()
+
+    mainui.pack_forget()
 
     # root.mainloop()
 
@@ -239,6 +300,6 @@ if __name__ == '__main__':
             update_webcam_preview()
         except StopIteration as e:
             # camera probably disconnected
-            disconnect_webcam()
+            press_disconnect_webcam()
         root.update_idletasks()
         root.update()
