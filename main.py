@@ -257,7 +257,7 @@ def say_message(msg: str):
     # Saving the converted audio in a mp3 file named welcome
     audioObj.save(soundFile) 
 
-    soundFile = soundFile.replace(" ", "%20");
+    soundFile = soundFile.replace(" ", "%20")
     
     # Playing the converted file 
     playsound(soundFile)  
@@ -351,7 +351,7 @@ if __name__ == '__main__':
     webcamdisconnectbutton = ttk.Button(mainui, text='Disconnect webcam', command=press_disconnect_webcam)
     webcamdisconnectbutton.pack()
 
-    b = ttk.Button(mainui, text='Finish', command=press_finish_button)
+    b = ttk.Button(mainui, text='Check Space', command=press_finish_button)
     b.bind('<Return>', press_finish_button)
     b.pack()
 
