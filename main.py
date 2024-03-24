@@ -7,8 +7,10 @@ from google.cloud import videointelligence
 from google.oauth2 import service_account
 from webcam import Webcam
 import tkinter as tk # base tk library
+import tkinter.font as tkfont
 from tkinter.messagebox import showinfo
 from tkinter import ttk # newer tk widgets
+from ttkthemes import ThemedTk
 
 from gtts import gTTS
 from itertools import islice
@@ -288,8 +290,18 @@ def close_window():
     is_done = True
 
 if __name__ == '__main__':
-    root = tk.Tk()
+    # root = tk.Tk()
+    root = ThemedTk(theme='arc', themebg=True)
     root.protocol("WM_DELETE_WINDOW", close_window)
+    root.resizable(True, True)
+    # root.style = ttk.Style(root)
+    # print(root.style.theme_names())
+
+    # see https://stackoverflow.com/questions/68375136/what-is-the-default-font-of-tkinter-label
+    bigfont = (tkfont.nametofont('TkTextFont').actual()['family'], 32)
+    # bigfont['size'] = 32
+    bigtheme = ttk.Style()
+    bigtheme.configure(".", font=bigfont)
 
     ttk.Label(root, text='KAM').pack()
 
@@ -299,7 +311,7 @@ if __name__ == '__main__':
     webcamrefreshbutton = ttk.Button(webcamoptions, text='Refresh webcam list', command=press_refresh_webcams)
     webcamrefreshbutton.pack()
 
-    webcamdropdown = ttk.Combobox(webcamoptions)
+    webcamdropdown = ttk.Combobox(webcamoptions, font=bigfont)
     webcamdropdown['values'] = []
     webcamdropdown.pack()
 
