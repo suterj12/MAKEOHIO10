@@ -17,12 +17,16 @@ from itertools import islice
 from PIL import Image, ImageTk # for converting webcam images to show in tk
 from io import BytesIO
 
+import serial
+
 CREDENTIALS = service_account.Credentials.from_service_account_file(
     '.env')
 FEATURES = [videointelligence.Feature.OBJECT_TRACKING]
 video_client = videointelligence.VideoIntelligenceServiceClient(credentials=CREDENTIALS)
 
 is_done: bool = False
+
+port: serial.Serial = None
 
 webcam: Webcam = None
 lastframe = None
@@ -263,7 +267,7 @@ def say_message(msg: str):
     soundFile = soundFile.replace(" ", "%20");
     
     # Playing the converted file 
-    playsound(soundFile)  
+    playsound(soundFile)
 
     showinfo('info', msg)
 
@@ -298,9 +302,12 @@ def press_finish_button(event=None):
 
     #Check if the table is clean and report to the user
     is_clean = check_if_table_is_clean(clean_table=clean_environment, objects_in_view=objects_in_frame)
+    global port
     if is_clean:
+        port.write(b'1')
         say_message('The table is clean!')
     else:
+        port.write(b'2')
         say_message('There\'s still more to clean!')
 
     # for o in objects:
@@ -372,7 +379,15 @@ if __name__ == '__main__':
 
     # root.mainloop()
 
+    # open serial port
+    port = serial.Serial('/dev/ttyUSB0', 9600)
+
     while not is_done:
+
+        if port.in_waiting > 0:
+            inbound = port.read(port.in_waiting)
+            print(inbound.decode('utf-8'))
+
         try:
             update_webcam_preview()
         except StopIteration as e:
@@ -380,3 +395,5 @@ if __name__ == '__main__':
             press_disconnect_webcam()
         root.update_idletasks()
         root.update()
+    
+    port.close()
