@@ -1,16 +1,15 @@
 import io
 
 from google.cloud import videointelligence
-#from google.oauth2 import service_account
+from google.oauth2 import service_account
 
 def video_detect_text():
     """Detect text in a local video."""
     #Get the API credentials from the env file.
-    #CREDENTIALS = service_account.Credentials.from_service_account_file('.env')
+    CREDENTIALS = service_account.Credentials.from_service_account_file('.env')
 
-    video_client = videointelligence.VideoIntelligenceServiceClient()
+    video_client = videointelligence.VideoIntelligenceServiceClient(credentials=CREDENTIALS)
     features = [videointelligence.Feature.TEXT_DETECTION]
-    #video_context = videointelligence.VideoContext()
 
     with io.open("libraryPhotos/book1.JPG", "rb") as file:
         input_content = file.read()
@@ -19,7 +18,6 @@ def video_detect_text():
         request={
             "features": features,
             "input_content": input_content,
-            #"video_context": video_context,
         }
     )
 
@@ -28,33 +26,7 @@ def video_detect_text():
 
     # The first result is retrieved because a single video was processed.
     annotation_result = result.annotation_results[0]
-
     for text_annotation in annotation_result.text_annotations:
-        print("\nText: {}".format(text_annotation.text))
-
-        # Get the first text segment
-        text_segment = text_annotation.segments[0]
-        start_time = text_segment.segment.start_time_offset
-        end_time = text_segment.segment.end_time_offset
-        print(
-            "start_time: {}, end_time: {}".format(
-                start_time.seconds + start_time.microseconds * 1e-6,
-                end_time.seconds + end_time.microseconds * 1e-6,
-            )
-        )
-
-        print("Confidence: {}".format(text_segment.confidence))
-
-        # Show the result for the first frame in this segment.
-        frame = text_segment.frames[0]
-        time_offset = frame.time_offset
-        print(
-            "Time offset for the first frame: {}".format(
-                time_offset.seconds + time_offset.microseconds * 1e-6
-            )
-        )
-        print("Rotated Bounding Box Vertices:")
-        for vertex in frame.rotated_bounding_box.vertices:
-            print("\tVertex.x: {}, Vertex.y: {}".format(vertex.x, vertex.y))
+        print(text_annotation.text)
 
 video_detect_text()
