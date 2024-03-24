@@ -59,8 +59,19 @@ def read_objects_from_file(file_name: str) -> set:
                 clean_objects.add(line.decode().strip())
     return clean_objects
 
-def check_if_table_is_clean(clean_table: set, items_in_view: set) -> bool:
-    return len(clean_table.difference(items_in_view)) == 0
+def get_objects_from_result(result) -> set:
+    #Retrieve the result.
+    object_annotations = result.annotation_results[0].object_annotations
+
+    #Add each of the items in the image to a set.
+    objects_in_view = set()
+    for object_annotation in object_annotations:
+        objects_in_view.add(object_annotation.entity.description)
+
+    return objects_in_view
+
+def check_if_table_is_clean(clean_table: set, objects_in_view: set) -> bool:
+    return len(clean_table.difference(objects_in_view)) == 0
 
 class BoundingBox:
     """
