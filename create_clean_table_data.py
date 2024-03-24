@@ -16,10 +16,10 @@ CREDENTIALS = service_account.Credentials.from_service_account_file('.env')
 
 #Define the video segments.
 segments = [
-        { "start_time_offset": "0.5s", "end_time_offset" : "1.5s" },
-        { "start_time_offset": "2.5s", "end_time_offset" : "3.5s" },
-        { "start_time_offset": "4.5s", "end_time_offset" : "5.5s" },
-        { "start_time_offset": "6.5s", "end_time_offset" : "7.5s" } 
+        { "start_time_offset": "0.5s", "end_time_offset" : "3.5s" },
+        { "start_time_offset": "4.5s", "end_time_offset" : "7.5s" },
+        { "start_time_offset": "8.5s", "end_time_offset" : "11.5s" },
+        { "start_time_offset": "12.5s", "end_time_offset" : "15.5s" } 
 ]
 
 #Set the output file name.
@@ -29,7 +29,7 @@ video_client = videointelligence.VideoIntelligenceServiceClient(credentials=CRED
 features = [videointelligence.Feature.OBJECT_TRACKING]
 
 #Read in video.
-video_path = "data/KSAMerged.MOV"
+video_path = "data/FinalTrainingData/KSA.MOV"
 with io.open(video_path, "rb") as file:
     input_content = file.read()
 
@@ -57,4 +57,4 @@ with open(output_file_path, 'w') as f:
         for object_annotation in object_annotations[i]:
             object_descriptions.add(object_annotation.entity.description)
             f.write(f'{object_annotation.entity.description}\n')
-        print('Object descriptions in segment' , i, ':', object_descriptions, '\n')
+        print('Object descriptions in segment' , i + 1, ':', object_descriptions, '\n')
