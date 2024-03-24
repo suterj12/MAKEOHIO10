@@ -59,6 +59,9 @@ def read_objects_from_file(file_name: str) -> set:
                 clean_objects.add(line.decode().strip())
     return clean_objects
 
+def check_if_table_is_clean(clean_table: set, items_in_view: set) -> bool:
+    return len(clean_table.difference(items_in_view)) == 0
+
 class BoundingBox:
     """
     all values range from 0 to 1 (they are proportional to the image)
