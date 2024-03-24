@@ -1,3 +1,5 @@
+# TODO: https://stackoverflow.com/questions/8044539/listing-available-devices-in-python-opencv
+
 from google.cloud import videointelligence
 from google.oauth2 import service_account
 from webcam import Webcam
@@ -14,6 +16,8 @@ CREDENTIALS = service_account.Credentials.from_service_account_file(
     '.env')
 FEATURES = [videointelligence.Feature.OBJECT_TRACKING]
 video_client = videointelligence.VideoIntelligenceServiceClient(credentials=CREDENTIALS)
+
+is_done: bool = False
 
 webcam: Webcam = None
 lastframe = None
@@ -258,8 +262,14 @@ def press_finish_button(event=None):
 
     # print('Success!')
 
+def close_window():
+    global is_done
+    is_done = True
+
 if __name__ == '__main__':
     root = tk.Tk()
+    root.protocol("WM_DELETE_WINDOW", close_window)
+
     ttk.Label(root, text='KAM').pack()
 
     # webcam options frame
@@ -295,7 +305,7 @@ if __name__ == '__main__':
 
     # root.mainloop()
 
-    while True:
+    while not is_done:
         try:
             update_webcam_preview()
         except StopIteration as e:
