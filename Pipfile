@@ -8,6 +8,7 @@ webcam = "*"
 gtts = "*"
 pillow = "*"
 pyserial = "*"
+playsound = "*"
 
 [dev-packages]
 
