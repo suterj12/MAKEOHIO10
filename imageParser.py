@@ -7,10 +7,10 @@ CREDENTIALS = service_account.Credentials.from_service_account_file(
     '.env')
 
 video_client = videointelligence.VideoIntelligenceServiceClient(credentials=CREDENTIALS)
-features = [videointelligence.Feature.LABEL_DETECTION]
+features = [videointelligence.Feature.OBJECT_TRACKING]
 
 #Read in image.
-video_path = "data/Covered2KSA.MOV"
+video_path = "data/Covered1KSA.MOV"
 with io.open(video_path, "rb") as file:
     input_content = file.read()
 
@@ -23,11 +23,11 @@ result = operation.result(timeout=500)
 print("\nFinished processing.\n")
 
 # The first result is retrieved because a single video was processed.
-object_annotations = result.annotation_results[0].segment_label_annotations
+object_annotations = result.annotation_results[0].object_annotations
 object_descriptions = set()
 entities = []
 for object_annotation in object_annotations:
     entities.append(object_annotation.entity.entity_id)
     object_descriptions.add(object_annotation.entity.description)
-print('Entity list: ', entities, '\n')
+#print('Entity list: ', entities, '\n')
 print('Object descriptions: ', object_descriptions, '\n')
